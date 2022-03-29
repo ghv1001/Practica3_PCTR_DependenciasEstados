@@ -15,12 +15,12 @@ public class Parque implements IParque{
 	public Parque(int capacity) {	// TODO
 		contadorPersonasTotales = 0;
 		contadoresPersonasPuerta = new Hashtable<String, Integer>();
-		aforo_max += capacity;
+		aforo_max = capacity;
 	}
 
 
 	@Override
-	public void entrarAlParque(String puerta){		// TODO
+	public synchronized void entrarAlParque(String puerta){		// TODO
 		
 		// Si no hay entradas por esa puerta, inicializamos
 		if (contadoresPersonasPuerta.get(puerta) == null){
@@ -28,7 +28,7 @@ public class Parque implements IParque{
 		}
 		
 		// TODO
-				
+		comprobarAntesDeEntrar();
 		
 		// Aumentamos el contador total y el individual
 		contadorPersonasTotales++;		
@@ -38,16 +38,16 @@ public class Parque implements IParque{
 		imprimirInfo(puerta, "Entrada");
 		
 		// TODO
-		
+		checkInvariante();
 		
 		// TODO
-		
+		notifyAll();
 	}
 	
 	// 
 	// TODO Método salirDelParque
 	//
-	public void salirDelParque(String puerta) {
+	public synchronized void salirDelParque(String puerta) {
 		
 	}
 	
@@ -74,17 +74,17 @@ public class Parque implements IParque{
 	protected void checkInvariante() {
 		assert sumarContadoresPuerta() == contadorPersonasTotales : "INV: La suma de contadores de las puertas debe ser igual al valor del contador del parte";
 		// TODO 
+		assert contadorPersonasTotales >= 0;
 		// TODO
-		
-		
+		assert contadorPersonasTotales <= aforo_max;
 		
 	}
 
-	protected void comprobarAntesDeEntrar(){	// TODO
+	protected synchronized void comprobarAntesDeEntrar(){	// TODO
 		//
 		// TODO
 		//
-		while(contadorPersonasTotales < aforo_max ) {
+		while(contadorPersonasTotales > aforo_max ) {
 			try{
 				wait();
 			}catch(InterruptedException e) {
@@ -93,12 +93,16 @@ public class Parque implements IParque{
 		}
 	}
 
-	protected void comprobarAntesDeSalir(){		// TODO
+	protected synchronized void comprobarAntesDeSalir(){		// TODO
 		//
 		// TODO
 		//
-		while(contadorPersonasTotales > 0) {
-			notifyAll();
+		while(contadorPersonasTotales < 0) {
+			try {
+				wait();
+			}catch(InterruptedException e) {
+				System.err.print(e.getMessage());
+			}
 		}
 	}
 
