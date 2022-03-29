@@ -7,14 +7,15 @@ public class Parque implements IParque{
 
 
 	// TODO 
+	private int aforo_max;
 	private int contadorPersonasTotales;
 	private Hashtable<String, Integer> contadoresPersonasPuerta;
 	
 	
-	public Parque() {	// TODO
+	public Parque(int capacity) {	// TODO
 		contadorPersonasTotales = 0;
 		contadoresPersonasPuerta = new Hashtable<String, Integer>();
-		// TODO
+		aforo_max += capacity;
 	}
 
 
@@ -83,12 +84,22 @@ public class Parque implements IParque{
 		//
 		// TODO
 		//
+		while(contadorPersonasTotales < aforo_max ) {
+			try{
+				wait();
+			}catch(InterruptedException e) {
+				System.err.print(e.getMessage());
+			}
+		}
 	}
 
 	protected void comprobarAntesDeSalir(){		// TODO
 		//
 		// TODO
 		//
+		while(contadorPersonasTotales > 0) {
+			notifyAll();
+		}
 	}
 
 
