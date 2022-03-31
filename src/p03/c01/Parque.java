@@ -94,7 +94,7 @@ public class Parque implements IParque{
 		
 	}
 
-	protected synchronized void comprobarAntesDeEntrar(){	// TODO
+	protected void comprobarAntesDeEntrar(){	// TODO
 		//
 		// TODO
 		//
@@ -107,7 +107,7 @@ public class Parque implements IParque{
 		}
 	}
 
-	protected synchronized void comprobarAntesDeSalir(){		// TODO
+	protected void comprobarAntesDeSalir(){		// TODO
 		//
 		// TODO
 		//
