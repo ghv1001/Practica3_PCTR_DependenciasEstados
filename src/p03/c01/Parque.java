@@ -49,6 +49,20 @@ public class Parque implements IParque{
 	//
 	public synchronized void salirDelParque(String puerta) {
 		
+		if(contadoresPersonasPuerta.get(puerta)==null) {
+			contadoresPersonasPuerta.put(puerta, 0);
+		}
+		
+		comprobarAntesDeSalir();
+	
+		contadorPersonasTotales--;
+		contadoresPersonasPuerta.put(puerta, contadoresPersonasPuerta.get(puerta)-1);
+		
+		imprimirInfo(puerta, "Salida");
+		
+		checkInvariante();
+		
+		notifyAll();
 	}
 	
 	private void imprimirInfo (String puerta, String movimiento){
@@ -74,9 +88,9 @@ public class Parque implements IParque{
 	protected void checkInvariante() {
 		assert sumarContadoresPuerta() == contadorPersonasTotales : "INV: La suma de contadores de las puertas debe ser igual al valor del contador del parte";
 		// TODO 
-		assert contadorPersonasTotales >= 0;
+		assert contadorPersonasTotales >= 0 : "INV: El numero de personas debe de ser mayor o igual que cero";
 		// TODO
-		assert contadorPersonasTotales <= aforo_max;
+		assert contadorPersonasTotales <= aforo_max : "INV: El numero de personas debe de ser menor o igual que el maximo";
 		
 	}
 
@@ -84,7 +98,7 @@ public class Parque implements IParque{
 		//
 		// TODO
 		//
-		while(contadorPersonasTotales > aforo_max ) {
+		while(contadorPersonasTotales >= aforo_max ) {
 			try{
 				wait();
 			}catch(InterruptedException e) {
@@ -97,7 +111,7 @@ public class Parque implements IParque{
 		//
 		// TODO
 		//
-		while(contadorPersonasTotales < 0) {
+		while(contadorPersonasTotales <= 0) {
 			try {
 				wait();
 			}catch(InterruptedException e) {
